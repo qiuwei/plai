@@ -41,7 +41,7 @@
                    (interp (fdC-body fd) (extend-env (binding (fdC-arg fd) (interp a env)) mt-env)))]
     [plusC (l r) (num+ (interp l env) (interp r env))]
     [multC (l r) (num* (interp l env) (interp r env))]
-    [fdC (n a b) expr]
+    [fdC (n a b) (funV n a b)]
   )
 )
 
