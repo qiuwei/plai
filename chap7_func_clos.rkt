@@ -32,18 +32,23 @@
   [numV (n : number)]
   [closV (arg : symbol) (body : ExprC) (env : Env)])
 
+(define (string-join [listS : (listof string)]) : string
+  (foldr string-append "" listS))
 
 (define (interp [expr : ExprC] [env : Env]) : Value
-  (type-case ExprC expr
-    [numC (n) (numV n)]
-    [idC (n) (lookup n env)]
-    [appC (f a) (local ([define fun-value (interp f env)])
-                   (interp (closV-body fun-value) (extend-env (binding (closV-arg fun-value) (interp a env)) (closV-env fun-value))))]
-    [plusC (l r) (num+ (interp l env) (interp r env))]
-    [multC (l r) (num* (interp l env) (interp r env))]
-    [lamC (a b) (closV a b env)]
+  (begin
+    (display (string-join (list "Interpreting " (to-string expr) "\nwith Env " (to-string Env) "\n"))) 
+    (type-case ExprC expr
+      [numC (n) (numV n)]
+      [idC (n) (lookup n env)]
+      [appC (f a) (local ([define fun-value (interp f env)])
+                    (interp (closV-body fun-value) (extend-env (binding (closV-arg fun-value) (interp a env)) (closV-env fun-value))))]
+      [plusC (l r) (num+ (interp l env) (interp r env))]
+      [multC (l r) (num* (interp l env) (interp r env))]
+      [lamC (a b) (closV a b env)]
+      )
+    )
   )
-)
 
 (define (num+ [l : Value] [r : Value]) : Value
   (cond
